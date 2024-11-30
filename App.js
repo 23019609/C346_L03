@@ -117,10 +117,8 @@ import {
     StyleSheet,
     Text,
     View,
-    TextInput,
     Button,
     Alert,
-    TouchableOpacity,
     ToastAndroid,
     Image,
     ScrollView,
@@ -130,13 +128,15 @@ import {
     useFonts,
     ArbutusSlab_400Regular,
 } from "@expo-google-fonts/arbutus-slab";
+import Icon from "react-native-vector-icons/FontAwesome6";
 
 const styles = StyleSheet.create({
     Image: {
-        width: "100vw",
-        height: 100,
+        width: 400,
+        height: 300,
         alignSelf: "center",
-        // resize,
+        resizeMode: "contain",
+        marginTop: 20,
     },
     Text: {
         color: "grey",
@@ -146,153 +146,128 @@ const styles = StyleSheet.create({
     },
 });
 
-const questionImg = {
-    Bee: require("./assets/img/bee.jpg"),
-    Kingfisher: require("./assets/img/kingfisher.jpg"),
-    Deer: require("./assets/img/deer.jpg"),
-};
-
-const Question = ({
-    imgName,
-    imgHeight,
-    option1,
-    option2,
-    option3,
-    correctAnswer,
-    setAnswer,
-}) => {
-    return (
-        <View>
-            <Image source={imgName} style={styles.Image} />
-
-            <Text style={{ color: "grey" }}>What animal is this?</Text>
-            <RNPickerSelect
-                onValueChange={(value) => {
-                    setAnswer(value, correctAnswer);
-                }}
-                items={[
-                    { label: `${option1}`, value: `${option1}` },
-                    { label: `${option2}`, value: `${option2}` },
-                    { label: `${option3}`, value: `${option3}` },
-                ]}
-            />
-        </View>
-    );
-};
-
 const MyApp = () => {
-    const [answer, setAnswer] = useState("");
-    useFonts({ Arbutus_Slab: ArbutusSlab_400Regular });
-    const checkAnswer = (answer, correctAnswer) => {
-        if (answer === correctAnswer) {
-            console.log("Correct answer");
+    useFonts({
+        Arbutus_Slab: ArbutusSlab_400Regular,
+    });
+
+    const [answers, setAnswers] = useState([]);
+
+    // const checkAnswer = (correctAnswer) => {
+    //      answer === correctAnswer
+    //         ? console.log("Correct answer")
+    //         : console.log("Wrong answer")
+    // };
+
+    const handleAnswerChange = (index, value) => {
+        setAnswers((prev) => {
+            const updateAnswers = [...prev];
+            updateAnswers[index] = value;
+
+            return updateAnswers;
+        });
+    };
+
+    const handleSubmit = () => {
+        let score = 0;
+        if (answers[0] === "Bee") score += 1;
+        if (answers[1] === "Hummingbird") score += 1;
+        if (answers[2] === "Deer") score += 1;
+
+        console.log(answers);
+
+        let finalScore = score;
+        let alertMsg = "";
+
+        if (finalScore === 3) {
+            alertMsg = "Excellent job! You scored 3/3!";
+        } else if (finalScore === 2) {
+            alertMsg = "Good job! You scored 2/3!";
+        } else if (finalScore === 1) {
+            alertMsg = "Nice try! You scored 1/3.";
+        } else if (finalScore === 0) {
+            alertMsg = "Better luck next time!";
+        } else {
+            alertMsg = "Debug";
         }
+
+        Alert.alert(alertMsg);
+    };
+
+    const questionList = [
+        {
+            id: "qn1",
+            img: require("./assets/img/bee.jpg"),
+            option1: "Bee",
+            option2: "Moth",
+            option3: "Fly",
+        },
+        {
+            id: "qn2",
+            img: require("./assets/img/kingfisher.jpg"),
+            option1: "Hummingbird",
+            option2: "Kingfisher",
+            option3: "Eastern Bluebird",
+        },
+        {
+            id: "qn3",
+            img: require("./assets/img/deer.jpg"),
+            option1: "Deer",
+            option2: "Chinkara",
+            option3: "Blackbuck",
+        },
+    ];
+
+    const Question = ({ index, img, option1, option2, option3 }) => {
+        return (
+            <View>
+                <Image source={img} style={styles.Image} />
+
+                <Text style={{ color: "grey" }}>What animal is this?</Text>
+                <RNPickerSelect
+                    onValueChange={(value) => {
+                        handleAnswerChange(index, value);
+                    }}
+                    items={[
+                        { label: option1, value: option1 },
+                        { label: option2, value: option2 },
+                        { label: option3, value: option3 },
+                    ]}
+                    value={answers[index]}
+                />
+            </View>
+        );
     };
 
     return (
-        <View style={{ padding: 30, paddingTop: 50, paddingBottom: 50 }}>
-            <ScrollView style={{ marginBottom: 30 }}>
+        <View style={{ margin: 20, marginTop: 70, marginBottom: 50 }}>
+            <ScrollView style={{ marginBottom: 20 }}>
                 {/*Header*/}
-                <Text>{"\n"}</Text>
                 <Text
                     style={{
                         alignSelf: "center",
-                        color: "blue",
+                        color: "dimgrey",
                         fontSize: 30,
                         fontFamily: "Arbutus_Slab",
-                        paddingBottom: 20,
+                        marginBottom: 10,
                     }}
                 >
-                    Quiz
+                    <Icon name="cat" size={30} color="dimgrey" /> Animal Quiz
                 </Text>
 
-                {/*Question 1*/}
-                <Question
-                    imgName={questionImg["Bee"]}
-                    imgHeight={278}
-                    option1="Bee"
-                    option2="Moth"
-                    option3="Fly"
-                    correctAnswer="Bee"
-                />
-
-                {/*<Image source={require('./assets/img/bee.jpg')} alt={"bee"}*/}
-                {/*       style={{width: 371, height: 278, alignSelf: 'center'}}/>*/}
-
-                {/*<Text style={{color: 'grey'}}>What animal is this?</Text>*/}
-                {/*<RNPickerSelect*/}
-                {/*    onValueChange={(value) => {*/}
-                {/*        setAnswer(value)*/}
-                {/*    }}*/}
-                {/*    items={[*/}
-                {/*        {label: 'Bee', value: 'Bee'},*/}
-                {/*        {label: 'Moth', value: 'Moth'},*/}
-                {/*        {label: 'Fly', value: 'Fly'},*/}
-                {/*    ]}*/}
-                {/*/>*/}
-
-                {/*Question 2*/}
-                <Text>{"\n"}</Text>
-                <Question
-                    imgName={questionImg["Kingfisher"]}
-                    imgHeight={247}
-                    option1="Hummingbird"
-                    option2="Kingfisher"
-                    option3="Eastern Bluebird"
-                    correctAnswer="Kingfisher"
-                />
-
-                {/*<Text>{'\n'}</Text>*/}
-                {/*<Image source={require('./assets/img/kingfisher.jpg')} alt={"kingfisher"}*/}
-                {/*       style={{width: 371, height: 247, alignSelf: 'center'}}/>*/}
-
-                {/*<Text style={{color: 'grey'}}>What animal is this?</Text>*/}
-                {/*<RNPickerSelect*/}
-                {/*    onValueChange={(value) => {*/}
-                {/*        setAnswer(value)*/}
-                {/*    }}*/}
-                {/*    items={[*/}
-                {/*        {label: 'Hummingbird', value: 'Hummingbird'},*/}
-                {/*        {label: 'Kingfisher', value: 'Kingfisher'},*/}
-                {/*        {label: 'Eastern Bluebird', value: 'Eastern Bluebird'},*/}
-                {/*    ]}*/}
-                {/*/>*/}
-
-                {/*Question 3*/}
-                <Text>{"\n"}</Text>
-                <Question
-                    imgName={questionImg["Deer"]}
-                    imgHeight={297}
-                    option1="Deer"
-                    option2="Chinkara"
-                    option3="Blackbuck"
-                    correctAnswer="Deer"
-                />
-
-                {/*<Text>{'\n'}</Text>*/}
-                {/*<Image source={require('./assets/img/deer.jpg')} alt={"deer"}*/}
-                {/*       style={{width: 371, height: 297, alignSelf: 'center'}}/>*/}
-
-                {/*<Text style={{color: 'grey'}}>What animal is this?</Text>*/}
-                {/*<RNPickerSelect*/}
-                {/*    onValueChange={(value) => {*/}
-                {/*        setAnswer(value)*/}
-                {/*    }}*/}
-                {/*    items={[*/}
-                {/*        {label: 'Deer', value: 'deer'},*/}
-                {/*        {label: 'Chinkara', value: 'chinkara'},*/}
-                {/*        {label: 'Blackbuck', value: 'blackbuck'},*/}
-                {/*    ]}*/}
-                {/*/>*/}
+                {questionList.map((qn, index) => (
+                    <Question
+                        key={qn.id}
+                        index={index}
+                        img={qn.img}
+                        option1={qn.option1}
+                        option2={qn.option2}
+                        option3={qn.option3}
+                    />
+                ))}
             </ScrollView>
 
-            <Button
-                title="SUBMIT"
-                onPress={() => {
-                    const correctAnswer1 = "bee";
-                    let resultmsg = "Good Try! 0/3";
-                }}
-            />
+            <Button title="SUBMIT" onPress={handleSubmit} />
         </View>
     );
 };
