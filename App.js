@@ -112,14 +112,12 @@
 // ==================== EXERCISE 2 ====================
 
 import React, { useState } from "react";
-import { StatusBar } from "expo-status-bar";
 import {
     StyleSheet,
     Text,
     View,
     Button,
     Alert,
-    ToastAndroid,
     Image,
     ScrollView,
 } from "react-native";
@@ -128,27 +126,47 @@ import {
     useFonts,
     ArbutusSlab_400Regular,
 } from "@expo-google-fonts/arbutus-slab";
+import {Poppins_400Regular} from "@expo-google-fonts/poppins";
 import Icon from "react-native-vector-icons/FontAwesome6";
 
 const styles = StyleSheet.create({
     Image: {
-        width: 400,
-        height: 300,
+        width: 370,
+        height: 370,
         alignSelf: "center",
-        resizeMode: "contain",
+        // resizeMode: "contain",
         marginTop: 20,
-    },
-    Text: {
-        color: "grey",
+        // borderStyle: "dotted",
+        // borderWidth: 1,
     },
     Question: {
-        color: "white",
+        color: "grey",
+        fontSize: 15,
+        alignSelf: "center",
+        fontFamily: "Poppins",
+        lineHeight: 25,
     },
+    Header: {
+        alignSelf: "center",
+        color: "dimgrey",
+        fontSize: 30,
+        fontFamily: "Arbutus_Slab",
+        marginBottom: 10,
+        marginTop: 20,
+        borderBottomWidth: 1,
+        borderBottomColor: "dimgrey",
+        borderStyle: "dashed",
+        lineHeight: 40,
+    }
 });
 
 const MyApp = () => {
+    // after npx expo install @expo-google-fonts/arbutus-slab
+    // and adding importing it and useFonts
+    // add line below ("Arbutus_Slab: " is optional, it is like a custom name that you can change)
     useFonts({
         Arbutus_Slab: ArbutusSlab_400Regular,
+        Poppins: Poppins_400Regular,
     });
 
     const [answers, setAnswers] = useState([]);
@@ -159,8 +177,11 @@ const MyApp = () => {
     //         : console.log("Wrong answer")
     // };
 
+    // takes index defined in <Question ... />, so that value of that qn no can be written over
+    // !!! order of parameters matter a lot, pass the arguments in the same order as called in Question onValueChange !!!
     const handleAnswerChange = (index, value) => {
         setAnswers((prev) => {
+            // create a new array based on prev state
             const updateAnswers = [...prev];
             updateAnswers[index] = value;
 
@@ -170,9 +191,9 @@ const MyApp = () => {
 
     const handleSubmit = () => {
         let score = 0;
-        if (answers[0] === "Bee") score += 1;
-        if (answers[1] === "Hummingbird") score += 1;
-        if (answers[2] === "Deer") score += 1;
+        if (answers[0] === "Birman Cat") score += 1;
+        if (answers[1] === "Calico Cat") score += 1;
+        if (answers[2] === "Sand Cat") score += 1;
 
         console.log(answers);
 
@@ -188,7 +209,7 @@ const MyApp = () => {
         } else if (finalScore === 0) {
             alertMsg = "Better luck next time!";
         } else {
-            alertMsg = "Debug";
+            alertMsg = "random debug msg to pinpoint error blah blah blah";
         }
 
         Alert.alert(alertMsg);
@@ -197,33 +218,37 @@ const MyApp = () => {
     const questionList = [
         {
             id: "qn1",
-            img: require("./assets/img/bee.jpg"),
-            option1: "Bee",
-            option2: "Moth",
-            option3: "Fly",
+            img: require("./assets/img/birman_cat.jpg"),
+            option1: "Ragdoll Cat",
+            option2: "Snowshoe Cat",
+            option3: "Siamese Cat",
+            option4: "Birman Cat",
         },
         {
             id: "qn2",
-            img: require("./assets/img/kingfisher.jpg"),
-            option1: "Hummingbird",
-            option2: "Kingfisher",
-            option3: "Eastern Bluebird",
+            img: require("./assets/img/calico_cat.jpg"),
+            option1: "Tuxedo Cat",
+            option2: "Orange Cat",
+            option3: "Calico Cat",
+            option4: "Chimera Cat",
         },
         {
             id: "qn3",
-            img: require("./assets/img/deer.jpg"),
-            option1: "Deer",
-            option2: "Chinkara",
-            option3: "Blackbuck",
+            img: require("./assets/img/sand_cat.jpg"),
+            option1: "Fawn Cat",
+            option2: "Sand Cat",
+            option3: "Tabby Cat",
+            option4: "Beige Cat",
         },
     ];
 
-    const Question = ({ index, img, option1, option2, option3 }) => {
+    const Question = ({ index, img, option1, option2, option3, option4 }) => {
         return (
             <View>
                 <Image source={img} style={styles.Image} />
 
-                <Text style={{ color: "grey" }}>What animal is this?</Text>
+                <Text style={styles.Question}>What type of cat is this?</Text>
+                {/*i genuinely dont know how to phrase this qn better sorry*/}
                 <RNPickerSelect
                     onValueChange={(value) => {
                         handleAnswerChange(index, value);
@@ -232,7 +257,9 @@ const MyApp = () => {
                         { label: option1, value: option1 },
                         { label: option2, value: option2 },
                         { label: option3, value: option3 },
+                        { label: option4, value: option4 },
                     ]}
+                    // update value of dropdown box
                     value={answers[index]}
                 />
             </View>
@@ -240,21 +267,15 @@ const MyApp = () => {
     };
 
     return (
-        <View style={{ margin: 20, marginTop: 70, marginBottom: 50 }}>
+        <View style={{ margin: 20, marginTop: 50, marginBottom: 50 }}>
             <ScrollView style={{ marginBottom: 20 }}>
                 {/*Header*/}
-                <Text
-                    style={{
-                        alignSelf: "center",
-                        color: "dimgrey",
-                        fontSize: 30,
-                        fontFamily: "Arbutus_Slab",
-                        marginBottom: 10,
-                    }}
-                >
-                    <Icon name="cat" size={30} color="dimgrey" /> Animal Quiz
+                <Text style={styles.Header}>
+                    <Icon name="cat" size={30} color="dimgrey" /> Cat Types Quiz
                 </Text>
 
+                {/*Questions*/}
+                {/*using the re-usable custom component more efficiently compared to prev attempt based on new knowledge learnt :D*/}
                 {questionList.map((qn, index) => (
                     <Question
                         key={qn.id}
@@ -263,6 +284,7 @@ const MyApp = () => {
                         option1={qn.option1}
                         option2={qn.option2}
                         option3={qn.option3}
+                        option4={qn.option4}
                     />
                 ))}
             </ScrollView>
